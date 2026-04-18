@@ -314,8 +314,14 @@ def main():
     else:
         logging.basicConfig(level=logging.INFO)
 
-    with MX4Haptic() as mx:
-        return COMMANDS[cmd](mx, sys.argv[2:])
+    try:
+        with MX4Haptic() as mx:
+            return COMMANDS[cmd](mx, sys.argv[2:])
+    except (HidppError, OSError) as e:
+        if cmd == "play":
+            return 0
+        log.error("%s", e)
+        return 1
 
 
 if __name__ == "__main__":
